@@ -1,21 +1,24 @@
 # Exs
 
 **TODO: Add description**
+- [] 支持启动应用
+- [] 支持emacs编辑器
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `exs` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:exs, "~> 0.1.0"}
-  ]
-end
+## 使用
 ```
+1. 先clone下来
+git clone git@github.com:guidao/exs.git
+2. 编译
+mix escript.install
+3. 创建一个脚本
+cat t.ex
+defmodule T do
+  use Exs, [deps: [%{:name => :cowboy, :version => "1.0.1"}]]
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/exs](https://hexdocs.pm/exs).
-
+  def main(args) do
+    IO.inspect(:cowboy.module_info())
+  end
+end
+4. 执行
+exs --eval t.ex
+```
