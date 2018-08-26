@@ -23,8 +23,23 @@ defmodule Exs.CLI do
   end
 
   def install do
-    des_dir = Path.join([Exs.Dep.work_dir, "deps", "exs", "0.0.1"])
-    src_dir = "_build/dev/lib/exs/"
-    System.cmd("cp", ["-rf", src_dir, des_dir])
+    des_dir = Path.join([Exs.Dep.work_dir, "deps", "exs", "0.0.1", "ebin"])
+    if !File.exists?(des_dir) do
+      File.mkdir_p!(des_dir)
+    end
+    spec = Application.spec(:exs) 
+    keys = [:applications, :description, :modules, :registered, :vsn]
+    kvs = Enum.filter(spec, fn {k,_}-> k in keys end)
+    app_file = {:application, :exs, kvs}
+    modules = Keyword.get(kvs, :modules, [])
+    # write module
+    Enum.each(modules, fn m ->
+      filename = to_string(m) <> ".beam"
+      {_, data, _} = :code.get_object_code(m)
+      File.write!(Path.join(des_dir, filename), data)
+    end)
+    # write app file
+    erl_app = :io_lib.format("~p.~n", [app_file])
+    :file.write_file(Path.join(des_dir, "exs.app"), erl_app)
   end
 end
