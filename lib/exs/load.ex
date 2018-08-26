@@ -7,7 +7,6 @@ defmodule Exs.Load do
     :ok
   end
   def ensure_path([%{:name => name, :version => version}|stack]) do
-    version = to_string(version)
     version = find_version(name, version)
     if(version == nil, do: raise("not found:#{name} #{version}"))
     dir = Path.join([Exs.Dep.work_dir, "deps", to_string(name), version])
@@ -15,7 +14,7 @@ defmodule Exs.Load do
     with {:ok, kvs} <- :file.consult(Path.join([dir, "mix.rebar.config"])),
          {:deps, deps} <- Enum.find(kvs, fn {a, _}-> a == :deps end) do
       all_deps = Enum.map(deps, fn {n, _, {_,_,v}} ->
-        %{:name => n, :version => "~> " <> to_string(v)}
+        %{:name => n, :version =>"~>" <> to_string(v)}
       end)
       ensure_path(all_deps ++ stack)
     else
@@ -36,6 +35,7 @@ defmodule Exs.Load do
         v = Enum.find(all_version, fn dir ->
           case version do
             "" ->
+              #如果version为空，最选择最高版本
               true
             _ ->
               Version.match?(dir, version)

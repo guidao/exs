@@ -1,8 +1,8 @@
 # Exs
 
 **TODO: Add description**
-- [] 支持启动应用
-- [] 支持emacs编辑器
+- [ ] 支持启动应用
+- [ ] 支持emacs编辑器
 
 ## 使用
 ```
@@ -10,7 +10,9 @@
 git clone git@github.com:guidao/exs.git
 2. 编译
 mix escript.install
-3. 创建一个脚本
+3. 安装依赖
+exs --install
+4. 创建一个脚本
 cat t.ex
 defmodule T do
   use Exs, [deps: [%{:name => :cowboy, :version => "1.0.1"}]]
