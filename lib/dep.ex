@@ -1,6 +1,9 @@
 defmodule Exs.Dep do
   @work_dir Path.join([System.user_home!(), ".exs"])
   @tmp_dir Path.join([@work_dir, "tmp"])
+  def work_dir do
+    @work_dir
+  end
 
   def add(name, version) do
     if !File.exists?(@work_dir) do
@@ -40,17 +43,8 @@ defmodule Exs.Dep do
 
   def deps_get do
     File.cd!(@tmp_dir, fn->
-      #Mix.Task.run("deps.get")
-      #Mix.Task.run("compile")
-      {msg, ok} = System.cmd("mix", ["deps.get"])
-      if !ok do
-        raise(msg)
-      end
-      {msg, ok } = System.cmd("mix", ["compile"])
-      if !ok do
-        raise(msg)
-      end
-      # 获取依赖信息
+      0 = Mix.shell().cmd("mix deps.get")
+      0 = Mix.shell().cmd("mix compile")
       contents = File.read!("mix.lock")
       opts = [file: "mix.lock", warn_on_unnecessary_quotes: false]
       {:ok, quoted} = Code.string_to_quoted(contents, opts)
@@ -64,16 +58,20 @@ defmodule Exs.Dep do
       k = Atom.to_string(k)
       {_, _, version, _, _, _, _} = v
       dep_dir = Path.join([@work_dir, "deps", k, version])
-      src_dir = Path.join([@tmp_dir, "_build/dev/lib", k])
-      if !File.exists?(dep_dir)do
+      src_dir = Path.join([@tmp_dir, "_build/dev/lib", k, "*"])
+      if !File.exists?(dep_dir) do
         File.mkdir_p!(dep_dir)
-        System.cmd("cp", ["-rf", src_dir, dep_dir])
+        0 = Mix.shell().cmd("cp -rf #{src_dir} #{dep_dir}")
       end
     end)
     :ok
   end
 
   def remove(name, version) do
+    dir = Path.join([@work_dir, "deps", Atom.to_string(name), version])
+    if File.exists?(dir) do
+      File.rmdir!(dir)
+    end
   end
 
 end
