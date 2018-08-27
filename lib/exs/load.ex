@@ -5,6 +5,9 @@ defmodule Exs.Load do
   # TODO version是否获取正确
 
   # 给iex用
+  def load(name) do
+    load(name, ">= 0.0.0")
+  end
   def load(name, version) do
     ensure_path([%{:name => name, :version => version}])
     Application.ensure_all_started(to_atom(name))
@@ -35,7 +38,8 @@ defmodule Exs.Load do
     String.to_atom(to_string(term))
   end
 
-  defp find_version(name, version) do
+  def find_version(name, version) do
+    version = if(version == "", do: ">= 0.0.0", else: version)
     name = to_string(name)
     deps_dir = Path.join([Exs.Dep.work_dir, "deps", name])
     cond do
@@ -44,13 +48,7 @@ defmodule Exs.Load do
       true ->
         all_version = File.ls!(deps_dir) |> Enum.sort(&(&1 > &2))
         v = Enum.find(all_version, fn dir ->
-          case version do
-            "" ->
-              #如果version为空，最选择最高版本
-              true
-            _ ->
-              Version.match?(dir, version)
-          end
+          Version.match?(dir, version)
         end)
         case v do
           nil ->
