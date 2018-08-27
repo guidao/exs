@@ -5,8 +5,12 @@ defmodule Exs.CLI do
     for {n, v} <- kv do
       case n do
         :add ->
-          [name, version] = String.split(v, "@")
-          Exs.Dep.add(name, version)
+            case String.split(v, "@") do
+              [name, version] ->
+                Exs.Dep.add(name, version)
+              [name] ->
+                Exs.Dep.add(name, ">= 0.0.0")
+            end
         :install ->
           install()
         :eval ->
@@ -27,7 +31,7 @@ defmodule Exs.CLI do
     if !File.exists?(des_dir) do
       File.mkdir_p!(des_dir)
     end
-    spec = Application.spec(:exs) 
+    spec = Application.spec(:exs)
     keys = [:applications, :description, :modules, :registered, :vsn]
     kvs = Enum.filter(spec, fn {k,_}-> k in keys end)
     app_file = {:application, :exs, kvs}

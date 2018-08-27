@@ -63,6 +63,8 @@ defmodule Exs.Dep do
         File.mkdir_p!(dep_dir)
         0 = Mix.shell().cmd("cp -rf #{src_dir} #{dep_dir}")
       end
+      # write exs.lock
+      File.write!(Path.join(dep_dir, "exs.lock"), "#{inspect(v)}")
     end)
     :ok
   end

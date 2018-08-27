@@ -10,6 +10,7 @@ defmodule Exs do
       def load_deps do
         deps = [%{:name => :exs, :version => "0.0.1"}|unquote(deps)]
         Exs.Load.ensure_path(deps)
+        Exs.Load.start_app(deps)
         :ok
       end
     end
