@@ -1,6 +1,8 @@
 defmodule Exs.CLI do
   def main(args \\[]) do
-    opts = [switches: [add: :string, install: :boolean, eval: :boolean]]
+    opts = [switches: [add: :string, install: :boolean,
+                       eval: :boolean, list: :boolean,
+                       version: :string]]
     {kv, args, _} = OptionParser.parse(args, opts)
     for {n, v} <- kv do
       case n do
@@ -15,6 +17,10 @@ defmodule Exs.CLI do
           install()
         :eval ->
           eval_file(Enum.at(args, 0), [])
+        :list ->
+          list("")
+        :version ->
+          list(v)
         _ ->
           :noop
       end
@@ -46,4 +52,20 @@ defmodule Exs.CLI do
     erl_app = :io_lib.format("~p.~n", [app_file])
     :file.write_file(Path.join(des_dir, "exs.app"), erl_app)
   end
+
+  def list("") do
+    des_dir = Path.join([Exs.Dep.work_dir, "deps"])
+    File.ls!(des_dir)
+    |> Enum.each(fn dir ->
+      IO.puts(dir)
+    end)
+  end
+
+  def list(name) do
+    des_dir = Path.join([Exs.Dep.work_dir, "deps", name])
+    with {:ok, dirs} <- File.ls(des_dir) do
+      Enum.map(dirs, fn dir -> IO.puts(dir) end)
+    end
+  end
+
 end
