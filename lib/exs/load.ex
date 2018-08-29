@@ -19,11 +19,16 @@ defmodule Exs.Load do
 
   def ensure_path([%{:name => name, :version => version}|stack]) do
     version = find_version(name, version)
-    if(version == nil, do: raise("not found:#{name} #{version}"))
-    dir = Path.join([Exs.Dep.work_dir, "deps", to_string(name), version])
-    true = Code.prepend_path(Path.join([dir, "ebin"]))
-    deps = get_deps(dir)
-    ensure_path(deps ++ stack)
+    if version != nil do
+      dir = Exs.Util.dep_dir(name, version)
+      # TODO 暂时区分不开运行时依赖跟编译时依赖
+      true = Code.prepend_path(Path.join([dir, "ebin"]))
+      deps = get_deps(dir)
+      ensure_path(deps ++ stack)
+    else
+      ensure_path(stack)
+    end
+    #if(version == nil, do: raise("not found:#{name} #{version}"))
   end
 
   def start_app([]) do
@@ -41,12 +46,20 @@ defmodule Exs.Load do
   def find_version(name, version) do
     version = if(version == "", do: ">= 0.0.0", else: version)
     name = to_string(name)
-    deps_dir = Path.join([Exs.Dep.work_dir, "deps", name])
     cond do
-      File.exists?(Path.join([deps_dir, version])) ->
+      File.exists?(Path.join([Exs.Util.dep_dir(name, version)])) ->
         version
       true ->
-        all_version = File.ls!(deps_dir) |> Enum.sort(&(&1 > &2))
+        all_version = File.ls!(Exs.Util.dep_dir())
+        |> Enum.filter(fn dir ->
+          dir =~ Regex.compile!("^" <> name)
+        end)
+        |> Enum.map(fn dir ->
+          case String.split(dir, "-") do
+            [n, v] -> v
+          end
+        end)
+        |> Enum.sort(&(&1 > &2))
         v = Enum.find(all_version, fn dir ->
           Version.match?(dir, version)
         end)

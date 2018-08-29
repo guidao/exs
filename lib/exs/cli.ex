@@ -33,7 +33,7 @@ defmodule Exs.CLI do
   end
 
   def install do
-    des_dir = Path.join([Exs.Dep.work_dir, "deps", "exs", "0.0.1", "ebin"])
+    des_dir = Path.join([Exs.Util.dep_dir("exs", "0.1.0"), "ebin"])
     if !File.exists?(des_dir) do
       File.mkdir_p!(des_dir)
     end
