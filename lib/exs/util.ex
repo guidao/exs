@@ -10,7 +10,7 @@ defmodule Exs.Util do
   end
 
   def dep_dir(name, version) do
-    Path.join([work_dir,"deps",dep_path(to_string(name), version)])
+    Path.join([work_dir, "deps", dep_path(to_string(name), version)])
   end
 
   defp dep_path(name, version) do
@@ -20,5 +20,4 @@ defmodule Exs.Util do
   def release_dir(name, version) do
     Path.join([work_dir, "tmp/_build/dev/rel/tmp/lib", dep_path(name, version)])
   end
-
 end

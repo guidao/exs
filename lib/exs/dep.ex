@@ -9,6 +9,7 @@ defmodule Exs.Dep do
     if !File.exists?(@work_dir) do
       File.mkdir!(@work_dir)
     end
+
     fetch(name, version)
   end
 
@@ -33,6 +34,7 @@ defmodule Exs.Dep do
       end
     "
     config_exs = "use Mix.Config"
+
     try do
       File.mkdir_p!(Path.join([@tmp_dir, "config"]))
       File.write!(Path.join([@tmp_dir, "mix.exs"]), tmp_exs)
@@ -45,7 +47,7 @@ defmodule Exs.Dep do
   end
 
   def deps_get do
-    File.cd!(@tmp_dir, fn->
+    File.cd!(@tmp_dir, fn ->
       0 = Mix.shell().cmd("mix deps.get")
       0 = Mix.shell().cmd("mix compile")
       0 = Mix.shell().cmd("mix release.init")
@@ -59,23 +61,26 @@ defmodule Exs.Dep do
   end
 
   def mv_dep(deps) do
-    Enum.map(deps, fn {k,v} ->
+    Enum.map(deps, fn {k, v} ->
       k = Atom.to_string(k)
       {_, _, version, _, _, _, _} = v
       dep_dir = Exs.Util.dep_dir(k, version)
       src_dir = Exs.Util.release_dir(k, version)
+
       with false <- File.exists?(dep_dir),
-      true <- File.exists?(src_dir) do
+           true <- File.exists?(src_dir) do
         File.mkdir_p!(dep_dir)
         0 = Mix.shell().cmd("cp -RL #{real_path(src_dir) <> "/*"} #{dep_dir}")
         File.write!(Path.join(dep_dir, "exs.lock"), "#{inspect(v)}")
       end
     end)
+
     :ok
   end
 
   def remove(name, version) do
     dir = Exs.Util.dep_dir(name, version)
+
     if File.exists?(dir) do
       File.rmdir!(dir)
     end
@@ -87,8 +92,4 @@ defmodule Exs.Dep do
       {:error, _} -> link
     end
   end
-
-
-
-
 end
