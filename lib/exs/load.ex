@@ -22,7 +22,6 @@ defmodule Exs.Load do
     if version != nil do
       dir = Exs.Util.dep_dir(name, version)
       # TODO 暂时区分不开运行时依赖跟编译时依赖
-      IO.inspect dir
       true = Code.prepend_path(Path.join([dir, "ebin"]))
       deps = get_deps(dir)
       ensure_path(deps ++ stack)

@@ -16,7 +16,8 @@ defmodule Exs.CLI do
         :install ->
           install()
         :eval ->
-          eval_file(Enum.at(args, 0), [])
+          [file|argv] = args
+          eval_file(file, argv)
         :list ->
           list("")
         :version ->
