@@ -40,7 +40,7 @@ defmodule Exs.Dep do
       lock = deps_get()
       mv_dep(lock)
     after
-      #File.rm_rf!(@tmp_dir)
+      File.rm_rf!(@tmp_dir)
     end
   end
 
@@ -66,7 +66,8 @@ defmodule Exs.Dep do
       src_dir = Exs.Util.release_dir(k, version)
       with false <- File.exists?(dep_dir),
       true <- File.exists?(src_dir) do
-        0 = Mix.shell().cmd("mv -f #{src_dir} #{Exs.Util.dep_dir()}")
+        File.mkdir_p!(dep_dir)
+        0 = Mix.shell().cmd("cp -RL #{real_path(src_dir) <> "/*"} #{dep_dir}")
         File.write!(Path.join(dep_dir, "exs.lock"), "#{inspect(v)}")
       end
     end)
@@ -79,5 +80,15 @@ defmodule Exs.Dep do
       File.rmdir!(dir)
     end
   end
+
+  def real_path(link) do
+    case File.read_link(link) do
+      {:ok, path} -> path
+      {:error, _} -> link
+    end
+  end
+
+
+
 
 end
