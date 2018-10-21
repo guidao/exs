@@ -10,8 +10,8 @@
 git clone git@github.com:guidao/exs.git
 2. 编译
 mix escript.install
-3. 安装依赖
-exs --install
+3. 安装exs作为依赖
+exs install
 4. 创建一个脚本
 cat t.ex
 defmodule T do
@@ -22,5 +22,5 @@ defmodule T do
   end
 end
 4. 执行
-exs --eval t.ex
+exs eval t.ex
 ```
