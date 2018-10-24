@@ -10,10 +10,9 @@ defmodule Exs do
 
       def load_deps do
         deps = [%{:name => :exs, :version => "0.0.1"} | unquote(deps)]
-	Exs.Load.load_and_start(deps)
+        Exs.Load.load_and_start(deps)
         :ok
       end
-
     end
   end
 

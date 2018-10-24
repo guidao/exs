@@ -14,23 +14,32 @@ defmodule Exs.Load do
   end
 
   def load_and_start(deps) do
-    deps = Enum.map(deps,
-      fn a when is_map(a)->
-	a
-	a when is_atom(a) ->
-	  %{:name => a, :version => ">= 0.0.0"}
-	a when is_binary(a) ->
-	  %{:name => to_atom(a), :versin => ">= 0.0.0"}
-    end)
+    deps =
+      Enum.map(
+        deps,
+        fn
+          a when is_map(a) ->
+            a
+
+          a when is_atom(a) ->
+            %{:name => a, :version => ">= 0.0.0"}
+
+          a when is_binary(a) ->
+            %{:name => to_atom(a), :versin => ">= 0.0.0"}
+        end
+      )
+
     ensure_path(deps)
     start_app(deps)
   end
+
   defp ensure_path([]) do
     :ok
   end
 
   defp ensure_path([%{:name => name, :version => version} | stack]) do
     version = find_version(name, version)
+
     if version != nil do
       dir = Exs.Util.dep_dir(name, version)
       # TODO 暂时区分不开运行时依赖跟编译时依赖

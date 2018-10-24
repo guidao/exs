@@ -10,6 +10,7 @@ defmodule Exs.CLI.List do
   # list all package
   def run([]) do
     des_dir = Path.join([Exs.Dep.work_dir(), "deps"])
+
     File.ls!(des_dir)
     |> Enum.each(fn dir ->
       IO.puts(dir)
@@ -17,7 +18,7 @@ defmodule Exs.CLI.List do
   end
 
   # list special package
-  def run([h|_]) do
+  def run([h | _]) do
     des_dir = Path.join([Exs.Dep.work_dir(), "deps", name])
 
     with {:ok, dirs} <- File.ls(des_dir) do

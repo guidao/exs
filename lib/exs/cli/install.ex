@@ -31,17 +31,20 @@ defmodule Exs.CLI.Install do
     erl_app = :io_lib.format("~p.~n", [app_file])
     :file.write_file(Path.join(des_dir, "exs.app"), erl_app)
 
-    IO.puts "install successful"
+    IO.puts("install successful")
   end
+
   # install third-part package from hex.pm
-  def run([h|t]) do
+  def run([h | t]) do
     case String.split(h, "@") do
       [name, version] ->
-	Exs.Dep.add(name, version)
+        Exs.Dep.add(name, version)
+
       [name] ->
-	Exs.Dep.add(name, ">= 0.0.0")
+        Exs.Dep.add(name, ">= 0.0.0")
+
       _ ->
-	raise("Unknow package: " <> to_string(h))
+        raise("Unknow package: " <> to_string(h))
     end
   end
 end

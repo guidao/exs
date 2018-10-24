@@ -3,9 +3,9 @@ defmodule Exs.CLI.Eval do
     raise("Need a ex file")
   end
 
-  def run([file|argv]) do
-    [{m,_}|_] = Code.compile_file(file)
-    apply(m,:__main__, [argv])
+  def run([file | argv]) do
+    [{m, _} | _] = Code.compile_file(file)
+    apply(m, :__main__, [argv])
   end
 
   def name do
