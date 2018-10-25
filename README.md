@@ -4,23 +4,19 @@
 - [ ] 支持启动应用
 - [ ] 支持emacs编辑器
 
-## 使用
+## Getting Start
 ```
-1. 先clone下来
-git clone git@github.com:guidao/exs.git
-2. 编译
-mix escript.install
-3. 安装exs作为依赖
-exs install
-4. 创建一个脚本
-cat t.ex
+$ git clone git@github.com:guidao/exs.git
+$ mix escript.install
+$ exs install
+$ exs install cowboy
+$ cat t.ex
 defmodule T do
-  use Exs, [deps: [%{:name => :cowboy, :version => "1.0.1"}]]
+  use Exs, deps: [:cowboy]
 
   def main(args) do
     IO.inspect(:cowboy.module_info())
   end
 end
-4. 执行
-exs eval t.ex
+$exs eval t.ex
 ```
