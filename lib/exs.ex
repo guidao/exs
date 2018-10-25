@@ -1,5 +1,5 @@
 defmodule Exs do
-  @doc """
+  @moduledoc ~S"""
      exs is a command line tool. Used to run an exs/ex file. 
      you don't need create a project. exs can install/load dependency.
      feature:
